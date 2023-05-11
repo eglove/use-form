@@ -1,7 +1,7 @@
 {
-  "name": "@ethang/hooks",
+  "name": "@ethang/use-form",
   "author": "Ethan Glover",
-  "repository": "https://github.com/eglove/hooks",
+  "repository": "https://github.com/eglove/use-form",
   "license": "ISC",
   "version": "0.0.1",
   "description": "",
