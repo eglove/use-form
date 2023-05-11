@@ -12,7 +12,7 @@ const build = async () => {
     execSync('tsc --project tsconfig.json');
 
     await esbuild({
-        bundle: true,
+        bundle: false,
         entryPoints: ['src/*.ts'],
         loader: {'.ts': 'ts'},
         minify: true,
@@ -28,9 +28,7 @@ const build = async () => {
         path.join(root, 'dist', 'package.json'),
     );
 
-    execSync('cd dist');
-    execSync('npm publish --access public');
-    execSync('cd ..');
+    execSync('cd dist && npm publish --access public && cd ..');
 };
 
 build()
