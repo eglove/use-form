@@ -10,8 +10,8 @@ dependencies:
 
 devDependencies:
   '@types/node':
-    specifier: ^20.1.3
-    version: 20.1.3
+    specifier: ^20.1.4
+    version: 20.1.4
   '@types/react':
     specifier: ^18.2.6
     version: 18.2.6
@@ -22,8 +22,8 @@ devDependencies:
     specifier: ^2.2.1
     version: 2.2.1(esbuild@0.17.19)
   eslint-config-ethang:
-    specifier: ^4.0.0
-    version: 4.0.0(eslint@8.40.0)(prettier@2.8.8)(typescript@5.0.4)
+    specifier: ^4.0.1
+    version: 4.0.1(eslint@8.40.0)(prettier@2.8.8)(typescript@5.0.4)
   rimraf:
     specifier: ^5.0.0
     version: 5.0.0
@@ -390,8 +390,8 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
-  /@types/node@20.1.3:
-    resolution: {integrity: sha512-NP2yfZpgmf2eDRPmgGq+fjGjSwFgYbihA8/gK+ey23qT9RkxsgNTZvGOEpXgzIGqesTYkElELLgtKoMQTys5vA==}
+  /@types/node@20.1.4:
+    resolution: {integrity: sha512-At4pvmIOki8yuwLtd7BNHl3CiWNbtclUbNtScGx4OHfBd4/oWoJC8KRCIxXwkdndzhxOsPXihrsOoydxBjlE9Q==}
     dev: true
 
   /@types/normalize-package-data@2.4.1:
@@ -1176,8 +1176,8 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /eslint-config-ethang@4.0.0(eslint@8.40.0)(prettier@2.8.8)(typescript@5.0.4):
-    resolution: {integrity: sha512-uUspOMw4Lo1+09LXzi2FclC6wjCgX7IrdCSjs5ov7u9MiN4ig5A2Rq8Neg1hCQBNqB5pKB4ckAq8nJ/UglgeTg==}
+  /eslint-config-ethang@4.0.1(eslint@8.40.0)(prettier@2.8.8)(typescript@5.0.4):
+    resolution: {integrity: sha512-ISs1CJOR4i383UvokTOn0Rsl9cRFHi+Tgu6nOhA+WEewYfk5CiUx8ZdkOMedJ+H4wmRs0kR9ALsVtCtF+qgfAw==}
     peerDependencies:
       eslint: ^8.38.0
       prettier: ^2.8.7
