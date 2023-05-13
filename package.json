@@ -7,7 +7,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "ts-node build.ts"
+    "build": "node build.mjs"
   },
   "peerDependencies": {
     "react": "^18.2.0",
@@ -25,7 +25,6 @@
     "eslint-config-ethang": "^4.0.0",
     "react": "^18.2.0",
     "rimraf": "^5.0.0",
-    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   }
 }
