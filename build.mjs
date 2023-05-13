@@ -2,6 +2,7 @@ import * as fs from 'node:fs'
 import { build as esbuild } from 'esbuild'
 import { globPlugin } from 'esbuild-plugin-glob'
 import { rimraf } from 'rimraf'
+import { execSync } from 'child_process'
 
 await rimraf('dist');
 
