@@ -3,7 +3,7 @@ import { build as esbuild } from 'esbuild'
 import { globPlugin } from 'esbuild-plugin-glob'
 import { rimraf } from 'rimraf'
 
-await rimraf('dist').catch()
+await rimraf('dist');
 
 await esbuild({
   bundle: false,
