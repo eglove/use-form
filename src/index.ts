@@ -1,149 +1,150 @@
 'use client';
-import { getZodFieldErrors } from './util';
 import type { ChangeEvent, Dispatch, FormEvent, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { z } from 'zod';
 
+import { getZodFieldErrors } from './util';
+
 export type FieldErrors<StateType> =
-    | Record<keyof StateType, string[] | null>
-    | undefined;
+  | Record<keyof StateType, string[] | null>
+  | undefined;
 
 export type UseFormProperties<StateType> = {
-    onChange?: (event: ChangeEvent) => unknown;
-    onError?: (error: unknown) => unknown;
-    onFieldError?: (error: FieldErrors<StateType>) => unknown;
-    onSubmit?: (...arguments_: unknown[]) => unknown;
-    zodValidator?: z.ZodTypeAny;
+  onChange?: (event: ChangeEvent) => unknown;
+  onError?: (error: unknown) => unknown;
+  onFieldError?: (error: FieldErrors<StateType>) => unknown;
+  onSubmit?: (...arguments_: unknown[]) => unknown;
+  zodValidator?: z.ZodTypeAny;
 };
 
 export type UseFormReturn<StateType> = {
-    clearFieldErrors: () => void;
-    clearForm: () => void;
-    fieldErrors: FieldErrors<StateType>;
-    formError: string | undefined;
-    formState: StateType;
-    handleChange: (event: ChangeEvent) => void;
-    handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
-    resetForm: () => void;
-    setFieldErrors: Dispatch<SetStateAction<FieldErrors<StateType>>>;
-    setFormError: Dispatch<SetStateAction<string | undefined>>;
-    setFormState: Dispatch<SetStateAction<StateType>>;
+  clearFieldErrors: () => void;
+  clearForm: () => void;
+  fieldErrors: FieldErrors<StateType>;
+  formError: string | undefined;
+  formState: StateType;
+  handleChange: (event: ChangeEvent) => void;
+  handleSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  resetForm: () => void;
+  setFieldErrors: Dispatch<SetStateAction<FieldErrors<StateType>>>;
+  setFormError: Dispatch<SetStateAction<string | undefined>>;
+  setFormState: Dispatch<SetStateAction<StateType>>;
 };
 
 const setAll = <ObjectType extends Record<string, unknown>, ValueType>(
-    object: ObjectType,
-    value?: ValueType,
+  object: ObjectType,
+  value?: ValueType,
 ): ObjectType => {
-    const newObject = Object.fromEntries(
-        Object.entries(object).map(([key]) => {
-            return [key, value];
-        }),
-    );
+  const newObject = Object.fromEntries(
+    Object.entries(object).map(([key]) => {
+      return [key, value];
+    }),
+  );
 
-    return newObject as unknown as ObjectType;
+  return newObject as unknown as ObjectType;
 };
 
 export const useForm = <StateType extends Record<string, unknown>>(
-    initialState: StateType,
-    properties?: UseFormProperties<StateType>,
+  initialState: StateType,
+  properties?: UseFormProperties<StateType>,
 ): UseFormReturn<StateType> => {
-    const [formState, setFormState] = useState(initialState);
-    const [formError, setFormError] = useState<string>();
-    const [fieldErrors, setFieldErrors] = useState<FieldErrors<StateType>>();
+  const [formState, setFormState] = useState(initialState);
+  const [formError, setFormError] = useState<string>();
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors<StateType>>();
 
-    const clearFieldErrors = (): void => {
-        if (fieldErrors !== undefined) {
-            setFieldErrors(setAll(fieldErrors, null));
-        }
+  const clearFieldErrors = (): void => {
+    if (fieldErrors !== undefined) {
+      setFieldErrors(setAll(fieldErrors, null));
+    }
+  };
+
+  const clearForm = (): void => {
+    setFormState(setAll(formState, ''));
+  };
+
+  const resetForm = (): void => {
+    setFormState(initialState);
+  };
+
+  const handleChange = (event: ChangeEvent): void => {
+    const eventTarget = event.target as unknown as {
+      checked?: boolean;
+      files: File[];
+      name: string;
+      type: string;
+      value: string | boolean | number | File;
     };
 
-    const clearForm = (): void => {
-        setFormState(setAll(formState, ''));
-    };
+    let { value } = eventTarget;
+    const { checked, name, type, files } = eventTarget;
 
-    const resetForm = (): void => {
-        setFormState(initialState);
-    };
+    if (type === 'checkbox' && checked !== undefined) {
+      value = checked;
+    }
 
-    const handleChange = (event: ChangeEvent): void => {
-        const eventTarget = event.target as unknown as {
-            checked?: boolean;
-            files: File[];
-            name: string;
-            type: string;
-            value: string | boolean | number | File;
-        };
+    if (type === 'number' && typeof value === 'string') {
+      value = Number.parseFloat(value.replaceAll(',', ''));
+    }
 
-        let { value } = eventTarget;
-        const { checked, name, type, files } = eventTarget;
+    if (type === 'file') {
+      [value] = files;
+    }
 
-        if (type === 'checkbox' && checked !== undefined) {
-            value = checked;
-        }
+    setFormState(formState_ => {
+      return {
+        ...formState_,
+        [name]: value,
+      };
+    });
 
-        if (type === 'number' && typeof value === 'string') {
-            value = Number.parseFloat(value.replaceAll(',', ''));
-        }
+    properties?.onChange?.(event);
+  };
 
-        if (type === 'file') {
-            [value] = files;
-        }
+  const handleSubmit = (event: FormEvent): void => {
+    event.preventDefault();
 
-        setFormState(formState_ => {
-            return {
-                ...formState_,
-                [name]: value,
-            };
-        });
+    try {
+      properties?.zodValidator?.parse(formState);
+    } catch (error: unknown) {
+      const errors = getZodFieldErrors(error, formState) as typeof fieldErrors;
+      setFieldErrors(errors);
+      properties?.onFieldError?.(errors);
+      return;
+    }
 
-        properties?.onChange?.(event);
-    };
+    if (properties?.onSubmit === undefined) {
+      return;
+    }
 
-    const handleSubmit = (event: FormEvent): void => {
-        event.preventDefault();
+    let hasException = false;
+    try {
+      properties.onSubmit();
+    } catch (error: unknown) {
+      hasException = true;
+      properties.onError?.(error);
 
-        try {
-            properties?.zodValidator?.parse(formState);
-        } catch (error: unknown) {
-            const errors = getZodFieldErrors(error, formState) as typeof fieldErrors;
-            setFieldErrors(errors);
-            properties?.onFieldError?.(errors);
-            return;
-        }
+      if (error instanceof Error) {
+        setFormError(error.message);
+      }
+    }
 
-        if (properties?.onSubmit === undefined) {
-            return;
-        }
+    if (!hasException) {
+      clearFieldErrors();
+      setFormError('');
+    }
+  };
 
-        let hasException = false;
-        try {
-            properties.onSubmit();
-        } catch (error: unknown) {
-            hasException = true;
-            properties.onError?.(error);
-
-            if (error instanceof Error) {
-                setFormError(error.message);
-            }
-        }
-
-        if (!hasException) {
-            clearFieldErrors();
-            setFormError('');
-        }
-    };
-
-    return {
-        clearFieldErrors,
-        clearForm,
-        fieldErrors,
-        formError,
-        formState,
-        handleChange,
-        handleSubmit,
-        resetForm,
-        setFieldErrors,
-        setFormError,
-        setFormState,
-    };
+  return {
+    clearFieldErrors,
+    clearForm,
+    fieldErrors,
+    formError,
+    formState,
+    handleChange,
+    handleSubmit,
+    resetForm,
+    setFieldErrors,
+    setFormError,
+    setFormState,
+  };
 };
